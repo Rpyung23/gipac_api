@@ -9,6 +9,10 @@ class SoporteController
     {
         return await SoporteModel.readAllSoporteModel(tipo_soporte,email_receptor,estado_soporte)
     }
+
+    static async updateSoporteController(id_soporte,usuario_receptor_ticket,solucion_ticket,estado){
+        return await SoporteModel.updateSoporteModel(id_soporte,usuario_receptor_ticket,solucion_ticket,estado)
+    }
 }
 
 module.exports = SoporteController

@@ -28,6 +28,7 @@ app.get("/all_tipo_soporte",async function(req,res){
 app.post("/all_soporte",ensureToken,async function(req,res)
 {
     try {
+        console.log(req.body.data.CodiUsua)
         var data = await SoporteController.readAllSoporteController(req.body.tipo_soporte,req.body.data.CodiUsua,req.body.estado_soporte)
 
         res.status(200).json({
@@ -41,6 +42,28 @@ app.post("/all_soporte",ensureToken,async function(req,res)
             status_code:400,
             msm:e.toString(),
             datos:[]
+        })
+    }
+})
+
+
+app.put("/update_soporte",ensureToken,async function(req,res)
+{
+    try {
+        // req.body.data.CodiUsua
+
+        var data = await SoporteController.updateSoporteController(req.body.id_soporte,
+            req.body.data.CodiUsua,req.body.solucion_ticket,req.body.estado)
+
+        res.status(200).json({
+            status_code: data ? 200 : 300,
+            msm: data ? 'Ticket actualizado con éxito' : 'No actualizo el TICKET'
+        })
+
+    }catch (e) {
+        res.status(200).json({
+            status_code:400,
+            msm:e.toString(),
         })
     }
 })
