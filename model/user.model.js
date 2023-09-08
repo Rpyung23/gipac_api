@@ -7,6 +7,7 @@ class UserModel
             var conn = await connDB().promise()
             var data  = await conn.query("select U.email_usuario,U.nombre_usuario,U.fk_id_rol from usuario as U where " +
                 "U.email_usuario = '"+user+"' and U.contrasenia = MD5('"+pass+"') and U.estado = 1")
+            console.log(data)
             return data[0]
         }catch (e) {
             console.log(e)
@@ -33,11 +34,11 @@ class UserModel
     static async readAllUsuarioModel(rol)
     {
         try {
-            var oSql = rol != "*" ? " where fk_id_rol = "+rol : ""
+            var oSql = rol != "*" ? " and fk_id_rol = "+rol : ""
 
             var conn = await connDB().promise()
             var sql = "select U.email_usuario,U.nombre_usuario,U.telefono_usuario,U.dni_usuario," +
-                "U.sexo_usuario,U.fk_id_rol,r.detalle from usuario as U inner join rol r on U.fk_id_rol = r.id_rol "+oSql+" where U.estado = 1"
+                "U.sexo_usuario,U.fk_id_rol,r.detalle from usuario as U inner join rol r on U.fk_id_rol = r.id_rol where U.estado = 1 "+oSql+" "
             var data = await conn.query(sql)
             await conn.end()
             return data[0]

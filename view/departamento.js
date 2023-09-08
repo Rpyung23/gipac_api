@@ -5,6 +5,45 @@ const DepartamentoController = require("../controller/departamento.controller")
 const {createToken, ensureToken} = require("../utils/jwt");
 
 
+app.post("/read_departamento_ocupados",ensureToken,async function(req,res)
+{
+    try {
+        var data = await DepartamentoController.readAllDepartamentoOcupadoController()
+
+        res.status(200).json({
+            status_code: data.length > 0 ? 200 : 300,
+            msm: data.length > 0 ? 'Datos consutados con éxito' : 'No existen datos disponibles' ,
+            datos: data
+        })
+
+    }catch (e) {
+        res.status(200).json({
+            status_code:400,
+            msm:e.toString(),
+            datos:[]
+        })
+    }
+})
+
+app.post("/read_departamento_libre",ensureToken,async function(req,res)
+{
+    try {
+        var data = await DepartamentoController.readAllDepartamentoLibreController()
+
+        res.status(200).json({
+            status_code: data.length > 0 ? 200 : 300,
+            msm: data.length > 0 ? 'Datos consutados con éxito' : 'No existen datos disponibles' ,
+            datos: data
+        })
+
+    }catch (e) {
+        res.status(200).json({
+            status_code:400,
+            msm:e.toString(),
+            datos:[]
+        })
+    }
+})
 app.get("/read_tipo_departamento",async function(req,res){
     try {
         var data = await DepartamentoController.readTipoDepartamentoModel()

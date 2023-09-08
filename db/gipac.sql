@@ -243,6 +243,7 @@ alter table arrendamiento
 alter table arrendamiento
     add constraint rel_departamento_arrendamiento foreign key arrendamiento (fk_code_departamento) references departamento (code_departamento);
 
+alter table pago_departamento add column detalle_comprobante longtext;
 
 DELIMITER //
 CREATE TRIGGER despues_de_insertar_arrendamiento
@@ -285,12 +286,20 @@ CREATE EVENT IF NOT EXISTS evento_genera_deuda_arriendo
 //
 DELIMITER ;
 
+DELIMITER //
+CREATE TRIGGER update_estado_departamento AFTER UPDATE ON arrendamiento
+FOR EACH ROW
+BEGIN
+    if OLD.estado != new.estado then
+        if new.estado in (0,2) then
+            update departamento set estado = 1,fecha_arrendado=null,actual_usuario_arrendador = null where code_departamento = new.fk_code_departamento;
+        end if;
+    end if;
+END;
+//
+DELIMITER ;
+
 
 /***********************************************************************/
 
-
-select PD.fecha_creacion,PD.fk_code_departamento,PD.motivo,PD.code_referencia,PD.foto_url_deposito,
-       PD.fk_email_usuario,U.nombre_usuario,U.telefono_usuario,PD.estado,TD.detalle_tipo_departamento,TD.precio_arriendo from pago_departamento as PD inner join
-       usuario as U on U.email_usuario = PD.fk_email_usuario inner join departamento as D on
-       PD.fk_code_departamento = D.code_departamento inner join tipo_departamento as TD on TD.id_tipo_departamento = D.fk_id_tipo_departamento
-       where PD.estado !=3 and date(PD.fecha_creacion) between '2023-09-01' and '2023-09-30' order by PD.fecha_creacion desc;
+select code_departamento,detalle_departamento from departamento where estado = 2;

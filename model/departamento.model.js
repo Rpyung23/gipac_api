@@ -1,6 +1,31 @@
 const connDB = require("../config/conn")
 class DepartamentoModel
 {
+    static async readAllDepartamentoOcupadoModel()
+    {
+        try {
+            var conn = await connDB().promise()
+            var sql = "select code_departamento,detalle_departamento from departamento where estado = 2"
+            var data = await conn.query(sql)
+            await conn.end()
+            return data[0]
+        }catch (e) {
+            return []
+        }
+    }
+
+    static async readAllDepartamentoLibreModel()
+    {
+        try {
+            var conn = await connDB().promise()
+            var sql = "select code_departamento,detalle_departamento from departamento where estado = 1"
+            var data = await conn.query(sql)
+            await conn.end()
+            return data[0]
+        }catch (e) {
+            return []
+        }
+    }
     static async readTipoDepartamentoModel(){
         try {
             var conn = await connDB().promise()

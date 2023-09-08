@@ -21,6 +21,17 @@ class DepartamentoController
     static async updateDepartamentoController(detalle_departamento, id_tipo_departamento,num_piso,code_departamento){
         return await DepartamentoModel.updateDepartamentoModel(detalle_departamento, id_tipo_departamento,num_piso,code_departamento)
     }
+
+    static async readAllDepartamentoLibreController()
+    {
+        return await DepartamentoModel.readAllDepartamentoLibreModel()
+    }
+
+    static async readAllDepartamentoOcupadoController()
+    {
+        return await DepartamentoModel.readAllDepartamentoOcupadoModel()
+    }
+
 }
 
 module.exports = DepartamentoController
