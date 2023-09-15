@@ -6,7 +6,8 @@ const {createToken, ensureToken} = require("../utils/jwt");
 
 app.put("/terminar_arrendamiento",ensureToken,async function(req,res){
     try {
-        var data = await ArrendamientoController.terminarArrendamientoController(req.body.arrendamiento,req.body.detalle_desalojo)
+        var data = await ArrendamientoController.terminarArrendamientoController(req.body.arrendamiento,
+            req.body.detalle_desalojo)
 
         res.status(200).json({
             status_code: data  ? 200 : 300,

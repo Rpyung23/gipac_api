@@ -301,5 +301,18 @@ DELIMITER ;
 
 
 /***********************************************************************/
-
-select code_departamento,detalle_departamento from departamento where estado = 2;
+use gipac;
+-- BancoEmisor
+select * from pago_departamento;
+update pago_departamento set fk_cuenta_banco = null,estado = 1,foto_url_deposito = null;
+select table1.*,concat(table1.fk_cuenta_banco,' ',B.detalle_banco) BancoEmisor
+      from (select PD.id_pago_departamento,PD.fk_cuenta_banco,PD.detalle_comprobante,PD.fk_code_departamento,
+       convert(date(PD.fecha_creacion),char(150)) fecha_creacion,PD.motivo,PD.code_referencia,
+       PD.foto_url_deposito,PD.fk_email_usuario,U.nombre_usuario,U.telefono_usuario,PD.estado,
+       TD.detalle_tipo_departamento,TD.precio_arriendo from pago_departamento as PD inner join
+       usuario as U on U.email_usuario = PD.fk_email_usuario inner join departamento as D on
+       PD.fk_code_departamento = D.code_departamento inner join tipo_departamento as TD on
+       TD.id_tipo_departamento = D.fk_id_tipo_departamento where PD.estado !=3) as table1
+       left join cuenta_bancaria as CB on CB.num_cuenta_bancaria = table1.fk_cuenta_banco
+       and CB.fk_email_usuario = table1.fk_email_usuario left join banco as B on B.id_banco = CB.fk_banco
+       order by fecha_creacion desc;

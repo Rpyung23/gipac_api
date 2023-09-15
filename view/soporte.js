@@ -46,6 +46,27 @@ app.post("/all_soporte",ensureToken,async function(req,res)
     }
 })
 
+app.post("/all_usuario_soporte",ensureToken,async function(req,res)
+{
+    try {
+        console.log(req.body.data.CodiUsua)
+        var data = await SoporteController.readAllSoporteUsuarioController(req.body.tipo_soporte,req.body.data.CodiUsua,req.body.estado_soporte)
+
+        res.status(200).json({
+            status_code: data.length > 0 ? 200 : 300,
+            msm: data.length > 0 ? 'Datos consutados con éxito' : 'No existen datos disponibles' ,
+            datos: data
+        })
+
+    }catch (e) {
+        res.status(200).json({
+            status_code:400,
+            msm:e.toString(),
+            datos:[]
+        })
+    }
+})
+
 
 app.put("/update_soporte",ensureToken,async function(req,res)
 {
