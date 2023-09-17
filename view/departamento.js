@@ -44,6 +44,7 @@ app.post("/read_departamento_libre",ensureToken,async function(req,res)
         })
     }
 })
+
 app.get("/read_tipo_departamento",async function(req,res){
     try {
         var data = await DepartamentoController.readTipoDepartamentoModel()
@@ -62,7 +63,6 @@ app.get("/read_tipo_departamento",async function(req,res){
         })
     }
 })
-
 
 app.post("/read_departamento",ensureToken,async function(req,res){
     try {
@@ -83,11 +83,11 @@ app.post("/read_departamento",ensureToken,async function(req,res){
     }
 })
 
-
 app.post("/create_departamento",ensureToken,async function(req,res){
     try {
         var data = await DepartamentoController.insertDepartamentoController(req.body.code_departamento,
-            req.body.num_piso, req.body.detalle_departamento, req.body.id_tipo_departamento)
+            req.body.num_piso, req.body.detalle_departamento, req.body.id_tipo_departamento,
+            req.body.sector)
 
         res.status(200).json({
             status_code: data  ? 200 : 300,

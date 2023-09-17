@@ -131,6 +131,8 @@ create table if not exists arrendamiento
 );
 
 
+create table sector(code_sector char(10) primary key,detalle varchar(250),estado smallint(1) default 1);
+
 /******** SQL POR DEFECTOS ********/
 insert into rol(detalle)
 values ('Administrador');
@@ -204,6 +206,10 @@ VALUES ('SOLICITUD DE ARRENDAMIENTO', 1);
 insert into tipo_soporte(detalle_soporte, estado)
 VALUES ('OTROS', 1);
 
+insert into sector(code_sector, detalle) VALUES ('MZA 1','MZA 1');
+insert into sector(code_sector, detalle) VALUES ('MZA 2','MZA 2');
+insert into sector(code_sector, detalle) VALUES ('MZA 3','MZA 3');
+
 alter table usuario
     add constraint rel_rol_usuario foreign key usuario (fk_id_rol) references rol (id_rol);
 alter table departamento
@@ -244,6 +250,10 @@ alter table arrendamiento
     add constraint rel_departamento_arrendamiento foreign key arrendamiento (fk_code_departamento) references departamento (code_departamento);
 
 alter table pago_departamento add column detalle_comprobante longtext;
+
+alter table departamento add column fk_sector char(10) default 'MZA 1';
+alter table departamento add constraint sector_departamento_ foreign key departamento(fk_sector) references sector(code_sector);
+
 
 DELIMITER //
 CREATE TRIGGER despues_de_insertar_arrendamiento
@@ -302,6 +312,17 @@ DELIMITER ;
 
 /***********************************************************************/
 use gipac;
+select * from pago_departamento;
+select S.code_sector,S.detalle from sector as S where S.estado = 1;
+
+
+
+
+
+
+
+
+
 -- BancoEmisor
 select * from pago_departamento;
 update pago_departamento set fk_cuenta_banco = null,estado = 1,foto_url_deposito = null;

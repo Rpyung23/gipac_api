@@ -9,9 +9,11 @@ class DepartamentoController
         return await DepartamentoModel.readAllDepartamentoModel(tipo_departamento)
     }
 
-    static async insertDepartamentoController(code_departamento,num_piso, detalle_departamento, id_tipo_departamento)
+    static async insertDepartamentoController(code_departamento,num_piso, detalle_departamento,
+                                              id_tipo_departamento,sector)
     {
-        return await DepartamentoModel.insertDepartamentoModel(code_departamento,num_piso, detalle_departamento, id_tipo_departamento)
+        return await DepartamentoModel.insertDepartamentoModel(code_departamento,num_piso, detalle_departamento,
+            id_tipo_departamento,sector)
     }
 
     static async deleteDepartamentoController(code_departamento){

@@ -61,12 +61,14 @@ class DepartamentoModel
         }
     }
 
-    static async insertDepartamentoModel(code_departamento,num_piso, detalle_departamento, id_tipo_departamento)
+    static async insertDepartamentoModel(code_departamento,num_piso, detalle_departamento,
+                                         id_tipo_departamento,sector)
     {
         try {
             var conn = await connDB().promise()
             var sql = "insert into departamento(code_departamento,num_piso, detalle_departamento, " +
-                "fk_id_tipo_departamento) VALUES ('"+code_departamento+"',"+num_piso+",'"+detalle_departamento+"',"+id_tipo_departamento+")"
+                "fk_id_tipo_departamento,fk_sector) VALUES ('"+code_departamento+"',"+num_piso+",'"+detalle_departamento+"'," +
+                ""+id_tipo_departamento+",'"+sector+"')"
             console.log(sql)
             await conn.query(sql)
             await conn.end()
