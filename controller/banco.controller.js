@@ -11,6 +11,11 @@ class BancoController
         return await BancoModel.readMiCuentaBancariasModel(usuario)
     }
 
+    static async insertCuentaBancoController(num_cuenta_bancaria, usuario, banco)
+    {
+        return await BancoModel.insertCuentaBancoModel(num_cuenta_bancaria, usuario, banco)
+    }
+
 
 }
 

@@ -1,6 +1,28 @@
 const connDB = require("../config/conn")
 class SoporteModel
 {
+    static async insertNuevoSoporteModel(fk_tipo_soporte, detalle_soporte, usuario_emisor_ticket,
+                                         url_img, url_archivo, asunto_soporte)
+    {
+        try {
+            var conn = await connDB().promise()
+            /*var sql  = "insert into soporte(fk_tipo_soporte, detalle_soporte, usuario_emisor_ticket," +
+                "url_img, url_archivo, asunto_soporte,fecha_apertura) values ("+fk_tipo_soporte+",'"+detalle_soporte+"'," +
+                "'"+usuario_emisor_ticket+"','"+url_img+"','"+url_archivo+"','"+asunto_soporte+"',NOW())"*/
+            var sql = `INSERT INTO soporte (fk_tipo_soporte, detalle_soporte, usuario_emisor_ticket,
+              url_img, url_archivo, asunto_soporte, fecha_apertura)
+              VALUES (${fk_tipo_soporte}, '${detalle_soporte}', '${usuario_emisor_ticket}',
+              ${url_img !== null ? `'${url_img}'` : null}, ${url_archivo !== null ? `'${url_archivo}'` : null},
+              '${asunto_soporte}', NOW())`
+
+            await conn.query(sql)
+            await conn.end()
+            return true
+        }catch (e) {
+            console.log(e)
+        }
+        return false
+    }
     static async readAllTipoSoporteModel()
     {
         try {

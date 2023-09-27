@@ -1,6 +1,20 @@
 const connDB = require("../config/conn")
 class BancoModel
 {
+    static async insertCuentaBancoModel(num_cuenta_bancaria, usuario, banco)
+    {
+        try {
+            var conn = await connDB().promise()
+            var sql = "insert into cuenta_bancaria(num_cuenta_bancaria, fk_email_usuario, fk_banco) " +
+                "VALUES ('"+num_cuenta_bancaria+"','"+usuario+"',"+banco+")"
+            await conn.query(sql)
+            await conn.end()
+            return true
+        }catch (e) {
+            console.log(e)
+            return false
+        }
+    }
     static async readTipoBancoModel()
     {
         try {

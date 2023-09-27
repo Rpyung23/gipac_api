@@ -1,13 +1,13 @@
-require("../utils/jwt")
 const express = require("express")
 const app = express()
-const {createToken, ensureToken} = require("../utils/jwt");
-const BancoController = require("../controller/banco.controller");
+const ServicioController = require("../controller/servicio.controller")
+const {ensureToken} = require("../utils/jwt");
 
-app.get("/tipo_banco",async function(req,res)
+
+app.get("/readTipoServicio",async function (req,res)
 {
     try {
-        var data = await BancoController.readTipoBancoController()
+        var data = await ServicioController.readTipoServicioController()
 
         res.status(200).json({
             status_code: data.length > 0 ? 200 : 300,
@@ -24,10 +24,10 @@ app.get("/tipo_banco",async function(req,res)
     }
 })
 
-app.post("/mis_cuentas",ensureToken,async function(req,res)
+app.post("/readAllServicios",ensureToken,async function (req,res)
 {
     try {
-        var data = await BancoController.readMiCuentaBancariasController(req.body.data.CodiUsua)
+        var data = await ServicioController.readAllReservasController(req.body.fecha,req.body.servicios)
 
         res.status(200).json({
             status_code: data.length > 0 ? 200 : 300,
@@ -45,10 +45,10 @@ app.post("/mis_cuentas",ensureToken,async function(req,res)
 })
 
 
-app.post("/create_cuenta",ensureToken,async function(req,res)
+app.post("/nuevoServicio",ensureToken,async function (req,res)
 {
     try {
-        var data = await BancoController.insertCuentaBancoController(req.body.cuenta, req.body.data.CodiUsua, req.body.banco)
+        var data = await ServicioController.insertNuevoServicioController(req.body.name,req.body.hora_inicio,req.body.hora_fin)
 
         res.status(200).json({
             status_code: data ? 200 : 300,
@@ -62,5 +62,24 @@ app.post("/create_cuenta",ensureToken,async function(req,res)
         })
     }
 })
+
+app.put("/updateServicio",ensureToken,async function(req,res)
+{
+    try {
+        var data = await ServicioController.updateEstadoServicioController(req.body.servicio,req.body.estado)
+
+        res.status(200).json({
+            status_code: data ? 200 : 300,
+            msm: data ? 'Datos consutados con éxito' : 'No existen datos disponibles' ,
+        })
+
+    }catch (e) {
+        res.status(200).json({
+            status_code:400,
+            msm:e.toString()
+        })
+    }
+})
+
 
 module.exports = app

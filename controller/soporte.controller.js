@@ -1,6 +1,12 @@
 const SoporteModel = require("../model/soporte.model")
 class SoporteController
 {
+    static async insertNuevoSoporteController(fk_tipo_soporte, detalle_soporte, usuario_emisor_ticket,
+                                         url_img, url_archivo, asunto_soporte)
+    {
+        return await SoporteModel.insertNuevoSoporteModel(fk_tipo_soporte, detalle_soporte, usuario_emisor_ticket,
+            url_img, url_archivo, asunto_soporte)
+    }
     static async readAllTipoSoporteController(){
         return await SoporteModel.readAllTipoSoporteModel()
     }

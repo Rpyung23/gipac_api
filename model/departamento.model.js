@@ -48,10 +48,10 @@ class DepartamentoModel
                 oSqlTDepartamento = " and D.fk_id_tipo_departamento in ("+tipo_departamento+") "
             }
             var conn = await connDB().promise()
-            var sql = "select D.code_departamento,D.num_piso,D.detalle_departamento,TD.id_tipo_departamento,TD.precio_arriendo,D.estado," +
+            var sql = "select D.code_departamento,S.detalle as detalle_sector,D.num_piso,D.detalle_departamento,TD.id_tipo_departamento,TD.precio_arriendo,D.estado," +
                 "D.actual_usuario_arrendador,TD.detalle_tipo_departamento,U.nombre_usuario,convert(D.fecha_arrendado,char(200)) fecha_arrendado from " +
                 "departamento as D left join usuario as U on U.email_usuario = D.actual_usuario_arrendador left join tipo_departamento as TD on " +
-                "D.fk_id_tipo_departamento = TD.id_tipo_departamento where D.estado != 0 "+oSqlTDepartamento
+                "D.fk_id_tipo_departamento = TD.id_tipo_departamento left join sector as S on S.code_sector = D.fk_sector  where D.estado != 0 "+oSqlTDepartamento
             var data = await conn.query(sql)
             await conn.end()
             return data[0]

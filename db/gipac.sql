@@ -133,6 +133,25 @@ create table if not exists arrendamiento
 
 create table sector(code_sector char(10) primary key,detalle varchar(250),estado smallint(1) default 1);
 
+create table pago_rubro(id_pago_rubro int primary key auto_increment,fk_code_departamento varchar(10) not null,
+                        fk_id_rubro int not null,fechaAsignacion datetime default now(),
+                        foto_recibo longtext,fk_email_usuario varchar(250),fk_cuenta_banco varchar(250),
+                        estado smallint(1) default 1 comment '0->anulado,1 _>pendiente,2->revisar recibo,3->verificado y pagado');
+
+create table tipo_servicio(id_tipo_servicio int primary key auto_increment,detalle_servicio varchar(250),
+             hora_inicio time default '08:00',hora_fin time default '20:00',estado smallint(1) default 1);
+
+create table reserva_servicio(id_reserva_servicio int primary key auto_increment,
+             fk_id_tipo_servicio int not null,
+             fk_email_usuario varchar(250) not null,
+             hora_inicio_reserva time not null,
+             hora_fin_reserva time not null,
+             motivo_rechazo longtext,
+             estado_reserva smallint(1) default 1 comment '1->en espera,2->reservado,3->rechazado');
+
+
+
+
 /******** SQL POR DEFECTOS ********/
 insert into rol(detalle)
 values ('Administrador');
@@ -210,6 +229,9 @@ insert into sector(code_sector, detalle) VALUES ('MZA 1','MZA 1');
 insert into sector(code_sector, detalle) VALUES ('MZA 2','MZA 2');
 insert into sector(code_sector, detalle) VALUES ('MZA 3','MZA 3');
 
+insert into tipo_servicio(detalle_servicio, hora_inicio, hora_fin)
+            VALUES ('CAPILLA SIGTINA','09:30:00','18:00:00');
+
 alter table usuario
     add constraint rel_rol_usuario foreign key usuario (fk_id_rol) references rol (id_rol);
 alter table departamento
@@ -254,6 +276,16 @@ alter table pago_departamento add column detalle_comprobante longtext;
 alter table departamento add column fk_sector char(10) default 'MZA 1';
 alter table departamento add constraint sector_departamento_ foreign key departamento(fk_sector) references sector(code_sector);
 
+
+alter table pago_rubro add column detalle longtext;
+alter table pago_rubro add column motivo longtext;
+
+alter table pago_rubro add constraint rel_pago_rubro_rubro foreign key pago_rubro(fk_id_rubro) references rubro(id_rubro);
+alter table pago_rubro add constraint rel_pago_rubro_departamento foreign key departamento(fk_code_departamento) references departamento(code_departamento);
+
+alter table reserva_servicio add column fechaReserva date not null;
+alter table reserva_servicio add foreign key reserva_servicio(fk_id_tipo_servicio) references tipo_servicio(id_tipo_servicio);
+alter table reserva_servicio add constraint rel_fk_email_usuario_reserva foreign key reserva_servicio(fk_email_usuario) references usuario(email_usuario);
 
 DELIMITER //
 CREATE TRIGGER despues_de_insertar_arrendamiento
@@ -310,30 +342,51 @@ END;
 DELIMITER ;
 
 
+DELIMITER //
+CREATE TRIGGER after_insert_soporte
+AFTER INSERT ON soporte
+FOR EACH ROW
+BEGIN
+    if url_img = 'null' then
+        update soporte set url_img = null where id_soporte = new.id_soporte;
+    end if;
+
+    if url_archivo = 'null' then
+        update soporte set url_archivo = null where id_soporte = new.id_soporte;
+    end if;
+
+
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+
+
+CREATE TRIGGER DespuesDelInsert
+BEFORE INSERT ON pago_rubro
+FOR EACH ROW
+BEGIN
+    SET NEW.fk_email_usuario = (SELECT D.actual_usuario_arrendador FROM departamento AS D WHERE D.code_departamento = NEW.fk_code_departamento LIMIT 1);
+    -- update pago_rubro set fk_email_usuario = (select D.actual_usuario_arrendador from departamento as D where D.code_departamento = new.fk_code_departamento limit 1);
+END //
+
+DELIMITER ;
+
+
+DELIMITER //
+
+
+CREATE TRIGGER DespuesDelInsertPDEPA
+BEFORE INSERT ON pago_departamento
+FOR EACH ROW
+BEGIN
+    SET NEW.fk_email_usuario = (SELECT D.actual_usuario_arrendador FROM departamento AS D WHERE D.code_departamento = NEW.fk_code_departamento LIMIT 1);
+    update arrendamiento set fecha_pago = DATE_ADD(fecha_pago,interval 1 MONTH ) where fk_code_departamento = new.fk_code_departamento
+                             and fk_email_usuario = (SELECT D.actual_usuario_arrendador FROM departamento AS D WHERE D.code_departamento = NEW.fk_code_departamento LIMIT 1);
+END //
+
+DELIMITER ;
+
 /***********************************************************************/
-use gipac;
-select * from pago_departamento;
-select S.code_sector,S.detalle from sector as S where S.estado = 1;
-
-
-
-
-
-
-
-
-
--- BancoEmisor
-select * from pago_departamento;
-update pago_departamento set fk_cuenta_banco = null,estado = 1,foto_url_deposito = null;
-select table1.*,concat(table1.fk_cuenta_banco,' ',B.detalle_banco) BancoEmisor
-      from (select PD.id_pago_departamento,PD.fk_cuenta_banco,PD.detalle_comprobante,PD.fk_code_departamento,
-       convert(date(PD.fecha_creacion),char(150)) fecha_creacion,PD.motivo,PD.code_referencia,
-       PD.foto_url_deposito,PD.fk_email_usuario,U.nombre_usuario,U.telefono_usuario,PD.estado,
-       TD.detalle_tipo_departamento,TD.precio_arriendo from pago_departamento as PD inner join
-       usuario as U on U.email_usuario = PD.fk_email_usuario inner join departamento as D on
-       PD.fk_code_departamento = D.code_departamento inner join tipo_departamento as TD on
-       TD.id_tipo_departamento = D.fk_id_tipo_departamento where PD.estado !=3) as table1
-       left join cuenta_bancaria as CB on CB.num_cuenta_bancaria = table1.fk_cuenta_banco
-       and CB.fk_email_usuario = table1.fk_email_usuario left join banco as B on B.id_banco = CB.fk_banco
-       order by fecha_creacion desc;
+select id_reserva_servicio from reserva_servicio;
