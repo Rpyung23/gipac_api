@@ -13,8 +13,8 @@ class ReporteController
         return await ReporteModel.ReporteReservaModel(fechaI,fechaF)
     }
 
-    static async ReporteRubroController(fechaI,fechaF){
-        return await  ReporteModel.ReporteRubroModel(fechaI,fechaF)
+    static async ReporteRubroController(fechaI,fechaF,usuario){
+        return await  ReporteModel.ReporteRubroModel(fechaI,fechaF,usuario)
     }
 }
 

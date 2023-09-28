@@ -68,7 +68,7 @@ app.post("/reporte_servicio",async function(req,res)
 app.post("/reporte_rubro",async function(req,res)
 {
     try {
-        var data = await ReporteController.ReporteRubroController(req.body.fechaI,req.body.fechaF)
+        var data = await ReporteController.ReporteRubroController(req.body.fechaI,req.body.fechaF,req.body.usuario)
 
         res.status(200).json({
             status_code: data.length > 0 ? 200 : 300,

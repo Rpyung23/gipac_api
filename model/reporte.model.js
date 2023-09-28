@@ -57,15 +57,30 @@ class ReporteModel
     }
 
 
-    static async ReporteRubroModel(fechaI,fechaF)
+    static async ReporteRubroModel(fechaI,fechaF,usuario)
     {
+        var sqlUsuario = ""
+
+        if(usuario != "*")
+        {
+            var user = []
+
+            for(var i = 0;i<usuario.length;i++)
+            {
+                user.push("'"+usuario[i]+"'")
+            }
+
+            sqlUsuario = " and PR.fk_email_usuario in ("+user+")"
+        }
+
+
         try {
             var conn = await connDB().promise()
             var sql = "select PR.estado,PR.fk_code_departamento,R.detalle_rubro,U.nombre_usuario,U.telefono_usuario,D.fk_sector," +
                 "convert(date(PR.fechaAsignacion),char(150)) fechaAsignacion,R.precio_rubro from pago_rubro as PR " +
                 "inner join usuario as U on U.email_usuario = PR.fk_email_usuario inner join rubro as R on " +
                 "R.id_rubro = PR.fk_id_rubro inner join departamento as D on D.code_departamento = PR.fk_code_departamento " +
-                "where PR.estado != 0 and date(PR.fechaAsignacion) between '"+fechaI+"' and '"+fechaF+"'"
+                "where PR.estado != 0 and date(PR.fechaAsignacion) between '"+fechaI+"' and '"+fechaF+"' "+sqlUsuario
             console.log(sql)
             var data = await conn.query(sql)
             await conn.end()
