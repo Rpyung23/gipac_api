@@ -8,6 +8,8 @@ app.post("/panel_Admin",ensureToken,async function(req,res)
     try {
         var data = await PanelController.readPanelAdminCardController()
 
+        console.log(data)
+
         res.status(200).json({
             status_code: data.length > 0 ? 200 : 300,
             msm: data.length > 0 ? 'Datos consutados con éxito' : 'No existen datos disponibles' ,

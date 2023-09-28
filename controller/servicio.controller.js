@@ -18,5 +18,16 @@ class ServicioController
     static async updateEstadoServicioController(servicio,estado){
         return await ServicioModel.updateEstadoServicioModel(servicio,estado)
     }
+
+    static async readAllReservasUsuarioController(fecha,servicios,usuario)
+    {
+        return await ServicioModel.readAllReservasUsuarioModel(fecha,servicios,usuario)
+    }
+
+    static async insertNuevaReservaController(servicio, usuario, hora_inicio_reserva, hora_fin_reserva,fechaReserva)
+    {
+        return await ServicioModel.insertNuevaReservaModel(servicio, usuario, hora_inicio_reserva, hora_fin_reserva,fechaReserva)
+    }
+
 }
 module.exports = ServicioController

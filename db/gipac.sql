@@ -389,4 +389,5 @@ END //
 DELIMITER ;
 
 /***********************************************************************/
-select id_reserva_servicio from reserva_servicio;
+use gipac;
+select count(*) from reserva_servicio where estado_reserva = 2;
